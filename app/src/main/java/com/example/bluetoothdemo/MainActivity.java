@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         setUpBluetooth();
         setUpDevicesList();
         setUpDiscoverButton();
+        setUpStopDiscoverButton();
     }
 
     @Override
@@ -68,12 +69,24 @@ public class MainActivity extends AppCompatActivity {
         }, 1);
     }
 
+    private void setUpStopDiscoverButton() {
+        Button button = findViewById(R.id.stopDiscover);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: clicked");
+                bleAdapter.cancelDiscovery();
+            }
+        });
+    }
+
     private void setUpDiscoverButton() {
         Button button = findViewById(R.id.startDiscover);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: clicked");
+                devicesListAdapter.clear();
                 bleAdapter.startDiscovery();
             }
         });
