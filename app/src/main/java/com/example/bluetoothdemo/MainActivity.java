@@ -119,6 +119,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Log.d(TAG, "onItemClick: clicked");
+                BluetoothDevice device = deviceList.get(i);
+                Intent intent = new Intent(MainActivity.this, DeviceDetailActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("device", device);
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
         };
         devicesListView.setAdapter(devicesListAdapter);
