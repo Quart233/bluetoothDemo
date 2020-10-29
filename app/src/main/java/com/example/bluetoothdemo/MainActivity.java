@@ -1,5 +1,6 @@
 package com.example.bluetoothdemo;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -16,21 +17,27 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
     private String TAG = "MainActivity";
     private BluetoothAdapter bleAdapter;
-    private ArrayAdapter<String> devicesListAdapter;
+    private ArrayAdapter<Map> devicesListAdapter;
     private BroadcastReceiver mReceiver;
     private static Handler mainHandler;
+    private ArrayList<Map> deviceList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,9 +101,28 @@ public class MainActivity extends AppCompatActivity {
 
     private void setUpDevicesList() {
         ListView devicesListView = findViewById(R.id.devicesList);
-        ArrayList<String> list = new ArrayList();
-        devicesListAdapter = new ArrayAdapter(MainActivity.this, R.layout.ble_item, R.id.label, list);
+        deviceList = new ArrayList();
+        devicesListAdapter = new ArrayAdapter(MainActivity.this, R.layout.ble_item, R.id.label, deviceList) {
+            @NonNull
+            @Override
+            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView tv = view.findViewById(R.id.label);
+
+                Map<String, String> deviceMap = deviceList.get(position);
+                tv.setText(deviceMap.get("name"));
+                return view;
+            }
+        };
+
+        AdapterView.OnItemClickListener devicesListOnItemClickListener = new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.d(TAG, "onItemClick: clicked");
+            }
+        };
         devicesListView.setAdapter(devicesListAdapter);
+        devicesListView.setOnItemClickListener(devicesListOnItemClickListener);
 
         // load paired devices
         Set<BluetoothDevice> pairedDevices = bleAdapter.getBondedDevices();
@@ -105,9 +131,12 @@ public class MainActivity extends AppCompatActivity {
         if(pairedDevices.size() > 0){
             for(BluetoothDevice device:pairedDevices) {
                 // 把名字和地址取出来添加到适配器中
-                final String deviceString = device.getName()+"\n"+ device.getAddress();
-                devicesListAdapter.add(deviceString);
-                Log.d(TAG, "setUpDevicesList: " + deviceString);
+                Map<String, String> deviceMap = new HashMap<String, String>();
+//                final String deviceString = device.getName()+"\n"+ device.getAddress();
+                deviceMap.put("name", device.getName());
+                deviceMap.put("address", device.getAddress());
+                devicesListAdapter.add(deviceMap);
+//                Log.d(TAG, "setUpDevicesList: " + deviceString);
             }
         }
 
@@ -125,9 +154,12 @@ public class MainActivity extends AppCompatActivity {
                     // 从 Intent 中获取发现的 BluetoothDevice
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     // 将名字和地址放入要显示的适配器中
-                    String deviceString = device.getName() + "\n" + device.getAddress();
-                    devicesListAdapter.add(deviceString);
-                    Log.d(TAG, "onReceive: " + deviceString);
+                    Map<String, String> deviceMap = new HashMap<String, String>();
+//                final String deviceString = device.getName()+"\n"+ device.getAddress();
+                    deviceMap.put("name", device.getName());
+                    deviceMap.put("address", device.getAddress());
+                    devicesListAdapter.add(deviceMap);
+//                    Log.d(TAG, "onReceive: " + deviceString);
                 }
             }
         };
