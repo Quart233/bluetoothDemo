@@ -34,10 +34,10 @@ import java.util.Set;
 public class MainActivity extends AppCompatActivity {
     private String TAG = "MainActivity";
     private BluetoothAdapter bleAdapter;
-    private ArrayAdapter<Map> devicesListAdapter;
+    private ArrayAdapter<BluetoothDevice> devicesListAdapter;
     private BroadcastReceiver mReceiver;
     private static Handler mainHandler;
-    private ArrayList<Map> deviceList;
+    private ArrayList<BluetoothDevice> deviceList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,8 +109,8 @@ public class MainActivity extends AppCompatActivity {
                 View view = super.getView(position, convertView, parent);
                 TextView tv = view.findViewById(R.id.label);
 
-                Map<String, String> deviceMap = deviceList.get(position);
-                tv.setText(deviceMap.get("name"));
+                BluetoothDevice device = deviceList.get(position);
+                tv.setText(device.getName());
                 return view;
             }
         };
@@ -131,12 +131,7 @@ public class MainActivity extends AppCompatActivity {
         if(pairedDevices.size() > 0){
             for(BluetoothDevice device:pairedDevices) {
                 // 把名字和地址取出来添加到适配器中
-                Map<String, String> deviceMap = new HashMap<String, String>();
-//                final String deviceString = device.getName()+"\n"+ device.getAddress();
-                deviceMap.put("name", device.getName());
-                deviceMap.put("address", device.getAddress());
-                devicesListAdapter.add(deviceMap);
-//                Log.d(TAG, "setUpDevicesList: " + deviceString);
+                devicesListAdapter.add(device);
             }
         }
 
@@ -154,12 +149,7 @@ public class MainActivity extends AppCompatActivity {
                     // 从 Intent 中获取发现的 BluetoothDevice
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     // 将名字和地址放入要显示的适配器中
-                    Map<String, String> deviceMap = new HashMap<String, String>();
-//                final String deviceString = device.getName()+"\n"+ device.getAddress();
-                    deviceMap.put("name", device.getName());
-                    deviceMap.put("address", device.getAddress());
-                    devicesListAdapter.add(deviceMap);
-//                    Log.d(TAG, "onReceive: " + deviceString);
+                    devicesListAdapter.add(device);
                 }
             }
         };
