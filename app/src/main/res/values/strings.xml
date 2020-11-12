@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">bluetoothDemo</string>
+    <string name="apply">apply</string>
 </resources>

@@ -10,16 +10,23 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.webkit.ValueCallback;
+import android.webkit.WebView;
 import android.widget.Button;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.widget.ContentLoadingProgressBar;
 
 import java.util.UUID;
+import java.util.concurrent.BlockingDeque;
 
 public class DeviceDetailActivity extends AppCompatActivity {
+    private WebView webView;
     private BluetoothDevice device;
     private BluetoothGattCallback bluetoothGattCallback;
     private ContentLoadingProgressBar contentLoadingProgressBar;
@@ -36,24 +43,76 @@ public class DeviceDetailActivity extends AppCompatActivity {
 
         setUpHandler();
         setUpContentLoadingProgressBar();
+         setUpTitleBarButton();
         setUpBluetoothGattCallback();
-        setUpHelloWorldButton();
+//        setUpHelloWorldButton();
+        setUpWebview();
         connect();
     }
 
-    private void setUpHelloWorldButton() {
-        Button hellworld = findViewById(R.id.helloWorld);
-        hellworld.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.apply:
+                // User chose the "Settings" item, show the app settings UI...
+                Log.d(TAG, "onOptionsItemSelected: action clicked");
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    private void setUpTitleBarButton() {
+//        Toolbar myToolbar = findViewById(R.id.my_toolbar);
+//        setSupportActionBar(myToolbar);
+        Button button = findViewById(R.id.apply);
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String Service_uuid = "0000ffe0-0000-1000-8000-00805f9b34fb";
-                String Characteristic_uuid_TX = "0000ffe1-0000-1000-8000-00805f9b34fb";
-                BluetoothGattCharacteristic gg = bluetoothGatt.getService(UUID.fromString(Service_uuid)).getCharacteristic(UUID.fromString(Characteristic_uuid_TX));
-                gg.setValue("Hello World");
-                bluetoothGatt.writeCharacteristic(gg);
+                webView.evaluateJavascript("javascript:getBits()", new ValueCallback<String>() {
+                    @Override
+                    public void onReceiveValue(String value) {
+                        //此处为 js 返回的结果
+                        Log.d(TAG, "onReceiveValue: " + value);
+                        String Service_uuid = "0000ffe0-0000-1000-8000-00805f9b34fb";
+                        String Characteristic_uuid_TX = "0000ffe1-0000-1000-8000-00805f9b34fb";
+                        BluetoothGattCharacteristic gg = bluetoothGatt.getService(UUID.fromString(Service_uuid)).getCharacteristic(UUID.fromString(Characteristic_uuid_TX));
+                        gg.setValue(value);
+                        bluetoothGatt.writeCharacteristic(gg);
+                    }
+                });
             }
         });
     }
+
+    private void setUpWebview() {
+        webView = findViewById(R.id.webView);
+
+        webView.loadUrl("file:///android_asset/www/index.html");
+
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setBuiltInZoomControls(true);
+        webView.getSettings().setDisplayZoomControls(false);
+        webView.setWebContentsDebuggingEnabled(true);
+    }
+
+//    private void setUpHelloWorldButton() {
+//        Button hellworld = findViewById(R.id.helloWorld);
+//        hellworld.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                String Service_uuid = "0000ffe0-0000-1000-8000-00805f9b34fb";
+//                String Characteristic_uuid_TX = "0000ffe1-0000-1000-8000-00805f9b34fb";
+//                BluetoothGattCharacteristic gg = bluetoothGatt.getService(UUID.fromString(Service_uuid)).getCharacteristic(UUID.fromString(Characteristic_uuid_TX));
+//                gg.setValue("Hello World");
+//                bluetoothGatt.writeCharacteristic(gg);
+//            }
+//        });
+//    }
 
     private void setUpHandler() {
         handler = new Handler(Looper.getMainLooper());
