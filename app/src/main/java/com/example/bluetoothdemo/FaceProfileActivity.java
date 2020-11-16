@@ -28,6 +28,7 @@ public class FaceProfileActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setUpSQLiteDatabaseHelper();
+        setUpFaceProfileList();
     }
 
     @Nullable
@@ -74,7 +75,7 @@ public class FaceProfileActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Log.d(TAG, "onItemClick: clicked");
 //                BluetoothDevice device = faceProfileListAdapter.get(i);
-//                Intent intent = new Intent(FaceProfileActivity.this, DeviceDetailActivity.class);
+//                Intent intent = new Intent(FaceProfileActivity.this, FaceProfileEditActivity.class);
 //                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //                Bundle bundle = new Bundle();
 //                bundle.putParcelable("device", device);

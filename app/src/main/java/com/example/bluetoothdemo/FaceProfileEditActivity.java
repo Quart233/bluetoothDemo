@@ -12,26 +12,23 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.webkit.ValueCallback;
 import android.webkit.WebView;
 import android.widget.Button;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.widget.ContentLoadingProgressBar;
 
 import java.util.UUID;
-import java.util.concurrent.BlockingDeque;
 
-public class DeviceDetailActivity extends AppCompatActivity {
+public class FaceProfileEditActivity extends AppCompatActivity {
     private WebView webView;
     private BluetoothDevice device;
     private BluetoothGattCallback bluetoothGattCallback;
     private ContentLoadingProgressBar contentLoadingProgressBar;
     private Handler handler;
-    private String TAG = "DeviceDetailActivity";
+    private String TAG = "FaceProfileEditActivity";
     private BluetoothGatt bluetoothGatt;
 
     @Override
@@ -119,7 +116,7 @@ public class DeviceDetailActivity extends AppCompatActivity {
     }
 
     private void setUpContentLoadingProgressBar() {
-        contentLoadingProgressBar = new ContentLoadingProgressBar(DeviceDetailActivity.this);
+        contentLoadingProgressBar = new ContentLoadingProgressBar(FaceProfileEditActivity.this);
     }
 
     private void setUpBluetoothGattCallback() {
@@ -169,6 +166,6 @@ public class DeviceDetailActivity extends AppCompatActivity {
                 contentLoadingProgressBar.show();
             }
         });
-        bluetoothGatt = device.connectGatt(DeviceDetailActivity.this, true, bluetoothGattCallback);
+        bluetoothGatt = device.connectGatt(FaceProfileEditActivity.this, true, bluetoothGattCallback);
     }
 }

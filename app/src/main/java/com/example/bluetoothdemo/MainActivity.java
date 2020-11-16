@@ -26,9 +26,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
@@ -120,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Log.d(TAG, "onItemClick: clicked");
                 BluetoothDevice device = deviceList.get(i);
-                Intent intent = new Intent(MainActivity.this, DeviceDetailActivity.class);
+                Intent intent = new Intent(MainActivity.this, FaceProfileEditActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 Bundle bundle = new Bundle();
                 bundle.putParcelable("device", device);
